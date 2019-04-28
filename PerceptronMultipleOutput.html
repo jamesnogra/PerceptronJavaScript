@@ -1,0 +1,102 @@
+<script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+
+<script>
+
+	let epochs = 100, learning_rate = 0.1;
+	let delta, y, v;
+	
+	let input = [
+		[0, 0, 0],
+		[0, 0, 1],
+		[0, 1, 0],
+		[0, 1, 1],
+		[1, 0, 0],
+		[1, 0, 1],
+		[1, 1, 0],
+		[1, 1, 1],
+	];
+	let output = [
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 1],
+		[0, 0],
+		[0, 1],
+		[0, 1],
+		[1, 1],
+	];
+	
+	//initialize weights and biases
+	let weights = [];
+	let bias = [];
+	for (let i=0; i<output[0].length; i++) {
+		bias.push(getRandomNumber());
+		weights[i] = [];
+		for (let j=0; j<input[0].length; j++) {
+			weights[i].push(getRandomNumber());
+		}
+	}
+	
+	function train() {
+		//run through the epochs
+		for (let i=0; i<epochs; i++) {
+			//run through all elements in each input
+			for (let k=0; k<input.length; k++) {
+				//run through all the outputs
+				for (let j=0; j<output[0].length; j++) {
+					v = 0;
+					//run through all the elements in each input
+					for (let l=0; l<input[k].length; l++) {
+						v += input[k][l] * weights[j][l];
+					}
+					v += bias[j];
+					y = (v>0) ? 1 : 0;
+					delta = output[k][j] - y;
+					//if calculated output is not equal to desired output
+					//then we update the weights
+					if (delta != 0) {
+						//adjust the weights based on delta
+						for (let l=0; l<weights.length; l++) {
+							weights[j][l] += learning_rate * delta * input[k][l];
+						}
+						bias[j] += learning_rate * delta;
+					}
+				}
+			}
+		}
+		$('#output-string').html('Finished training!');
+	}
+	
+	function calculate() {
+		let temp_v, temp_y;
+		let temp_input = [
+			$('#x0').val(),
+			$('#x1').val(),
+			$('#x2').val(),
+		];
+		temp_output = "";
+		for (let i=0; i<output[0].length; i++) {
+			temp_v = 0;
+			for (let j=0; j<temp_input.length; j++) {
+				temp_v += temp_input[j] * weights[i][j];
+			}
+			temp_v += bias[i];
+			temp_y = (temp_v>0) ? 1 : 0;
+			temp_output += temp_y + " ";
+		}
+		$('#output-string').html(temp_output);
+	}
+	
+	
+	function getRandomNumber(min=0, max=1) {
+		return Math.random() * (+max - +min) + +min;
+	}
+
+</script>
+
+<button onClick="train();">Train</button>
+<div>X0: <input type="text" id="x0" /></div>
+<div>X1: <input type="text" id="x1" /></div>
+<div>X2: <input type="text" id="x2" /></div>
+<h3 id="output-string"></h3>
+<button onClick="calculate();">Calculate</button>
