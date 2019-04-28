@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Simple Perceptron</title>
+	<script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		let learning_rate = 0.1;
+		let error = 0;
+		let epochs = 100;
+		let delta = 0;
+		let y = 0, v = 0;
+		let input = [
+			[0, 0],
+			[0, 1],
+			[1, 0],
+			[1, 1],
+		];
+		let output = [
+			[0],
+			[1],
+			[1],
+			[1],
+		];
+		shuffle(input, output);
+		let bias = getRandomNumber();
+		
+		let weights = [];
+		for (let x=0; x<input[0].length; x++) {
+			weights.push(getRandomNumber());
+		}
+
+		for (let i=0; i<epochs; i++) {
+			error = 0;
+			for (let j=0; j<input.length; j++) {
+				v = 0;
+				for (let k=0; k<input[j].length; k++) {
+					v += input[j][k] * weights[k];
+				}
+				v += bias;
+				if (v > 0) {
+					y = 1;
+				} else {
+					y = 0;
+				}
+				delta = output[j] - y;
+				if (delta != 0) {
+					//adjust the weights based on delta
+					for (let k=0; k<weights.length; k++) {
+						weights[k] += learning_rate * delta * input[j][k];
+					}
+					bias += learning_rate * delta;
+				}
+				error += Math.abs(delta);
+			}
+			console.log("Error: " + error);
+			console.log("Weights: ", weights);
+		}
+
+		function calculateResult() {
+			var x1 = $('#x1').val();
+			var x2 = $('#x2').val();
+			if (x1.length==0 || x2.length==0) {
+				alert('X1 and X1 are required!');
+				return;
+			}
+			v = x1 * weights[0] + x2 * weights[1] + bias;
+			if (v > 0) {
+				y = 1;
+			} else {
+				y = 0;
+			}
+			$('#output').html(y);
+		}
+
+
+
+		function getRandomNumber(min=0, max=1) {
+			return Math.random() * (+max - +min) + +min;
+		}
+
+		function shuffle(obj1, obj2) {
+			var index = obj1.length;
+			var rnd, tmp1, tmp2;
+
+			while (index) {
+				rnd = Math.floor(Math.random() * index);
+				index -= 1;
+				tmp1 = obj1[index];
+				tmp2 = obj2[index];
+				obj1[index] = obj1[rnd];
+				obj2[index] = obj2[rnd];
+				obj1[rnd] = tmp1;
+				obj2[rnd] = tmp2;
+			}
+		}
+	</script>
+</head>
+
+<body>
+	<p>X1: <input type="text" id="x1" /></p>
+	<p>X2: <input type="text" id="x2" /></p>
+	<p><button onClick="calculateResult();">Calculate</button></p>
+	<h3>Output: <span id="output"></span></h3>
+</body>
+
+</html>
