@@ -2,25 +2,67 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Simple Perceptron</title>
+	<title>Large Perceptron</title>
 	<script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
 	<script type="text/javascript">
 		let learning_rate = 0.1;
 		let error = 0;
-		let epochs = 100;
+		let epochs = 500;
 		let delta = 0;
 		let y = 0, v = 0;
+		//first row is gender, 1 is male 0 is female
+		//salary, 1 is above or equal 1000, 0 if less than 1000
+		//third row is age, 1 if less than or equal to 21, 0 if greater than 21 years old
 		let input = [
-			[0, 0],
-			[0, 1],
-			[1, 0],
-			[1, 1],
+			[1, 1, 1],
+			[1, 1, 1],
+			[1, 1, 1],
+			[1, 1, 1],
+			[1, 1, 1],
+			[1, 1, 1],
+			[1, 1, 1],
+			[1, 1, 1],
+			[1, 1, 1],
+			[1, 1, 1],
+			[1, 1, 1], //11th
+			[0, 1, 1],
+			[1, 0, 1],
+			[1, 0, 1],
+			[0, 0, 0],
+			[1, 0, 1],
+			[0, 1, 1],
+			[0, 1, 1],
+			[1, 1, 0],
+			[1, 1, 0],	
+			[1, 1, 0],	
+			[1, 1, 0],
 		];
+		//throw new Error("Something went badly wrong!");
+		//1 if male, salary higher than or equal to 1000, and age lesser than or equal to 21
 		let output = [
-			[0],
-			[0],
-			[0],
 			[1],
+			[1],
+			[1],
+			[1],
+			[1],
+			[1],
+			[1],
+			[1],
+			[1],
+			[1],
+			[1],//11th
+			[0],
+			[0],
+			[0],
+			[0],
+			[0],
+			[0],
+			[0],
+			[0],
+			[0],
+			[0],
+			[0],
+			[0],
 		];
 		shuffle(input, output);
 		let bias = getRandomNumber();
@@ -54,21 +96,25 @@
 				error += Math.abs(delta);
 			}
 			console.log("Error: " + error);
-			console.log("Weights: ", weights);
+			//console.log("Weights: ", weights);
 		}
 
 		function calculateResult() {
 			var x1 = $('#x1').val();
 			var x2 = $('#x2').val();
+			var x3 = $('#x3').val();
 			if (x1.length==0 || x2.length==0) {
 				alert('X1 and X1 are required!');
 				return;
 			}
-			v = x1 * weights[0] + x2 * weights[1] + bias;
+			x1 = (x1=="MALE") ? 1 : 0;
+			x2 = (parseInt(x2)>= 1000) ? 1 : 0;
+			x3 = (parseInt(x3)<=21) ? 1 : 0;
+			v = x1 * weights[0] + x2 * weights[1] + x3 * weights[2] + bias;
 			if (v > 0) {
-				y = 1;
+				y = "Will probably play the game...";
 			} else {
-				y = 0;
+				y = "Will not play the game...";
 			}
 			$('#output').html(y);
 		}
@@ -98,8 +144,9 @@
 </head>
 
 <body>
-	<p>X1: <input type="text" id="x1" /></p>
-	<p>X2: <input type="text" id="x2" /></p>
+	<p>Gender: <select id="x1"><option value="MALE">Male</option><option value="FEMALE">Female</option></select></p>
+	<p>Salary: <input type="text" id="x2" /></p>
+	<p>Age: <input type="text" id="x3" /></p>
 	<p><button onClick="calculateResult();">Calculate</button></p>
 	<h3>Output: <span id="output"></span></h3>
 </body>

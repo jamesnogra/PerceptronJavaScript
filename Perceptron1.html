@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Simple Perceptron</title>
+	<script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+
+		function generateRandomNumber() {
+			return Math.random();
+		}
+
+		let w1=generateRandomNumber(), w2=generateRandomNumber(), bias=generateRandomNumber();
+		let lr = 0.1;
+		let epochs = 1000;
+
+		let inputs = [
+			[10, 10],
+			[20, 12],
+			[15, 7.5],
+			[10, 15],
+			[7, 12.5],
+			[40, 60],
+			[45, 70],
+			[50, 50],
+			[55, 80],
+		];
+		let outputs = [
+			0,
+			0,
+			0,
+			0,
+			0,
+			1,
+			1,
+			1,
+			1,
+		];
+
+		$(document).ready(function() {
+			$('#train-button').click(function() {
+				sartTraining();
+			});
+			$('#guess-button').click(function() {
+				calculateGuess();
+			})
+		});
+
+		function sartTraining() {
+			let v = 0, delta = 0;
+			let errors = 0;
+			for (var i=0; i<epochs; i++) {
+				errors = 0;
+				for (var x=0; x<inputs.length; x++) {
+					v = ((inputs[x][0]*w1 + inputs[x][1]*w2 + bias)>0) ? 1 : 0;
+					delta = outputs[x] - v;
+					if (delta != 0) {
+						w1 += lr * delta * inputs[x][0];
+						w2 += lr * delta * inputs[x][1];
+						bias += lr * delta;
+						errors++;
+					}
+					//console.log("Inputs: ", inputs[x]);
+					//console.log("Expected Output: " + outputs[x] + "\nGuess: " + v + "\nDelta: " + delta + "\nW1: " + w1, "\nW2: " + w2 + "\nErrors: " + errors);
+				}
+				console.log("Errors: " + errors);
+			}
+			console.log("w1: " + w1 + "\nw2: " + w2 + "\nbias: " + bias);
+			$('#output').html("Done training...");
+		}
+
+		function calculateGuess() {
+			console.log("w1: " + w1 + "\nw2: " + w2 + "\nbias: " + bias);
+			let x1, x2;
+			x1 = $('#x1').val();
+			x2 = $('#x2').val();
+			console.log("V is ", (parseInt(x1)*w1 + parseInt(x2)*w2 + bias))
+			v = ((parseInt(x1)*w1 + parseInt(x2)*w2 + bias)>0) ? 1 : 0;
+			$('#output').html(v);
+		}
+	</script>
+</head>
+
+<body>
+	<button type="button" id="train-button">Start Training</button>
+	<h3>Output: <span id="output"></span></h3>
+	<p>Age: <input type="text" id="x1" /></p>
+	<p>Salary: <input type="text" id="x2" /></p>
+	<button type="button" id="guess-button">Guess</button>
+</body>
+
+</html>
